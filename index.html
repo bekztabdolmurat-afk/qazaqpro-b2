@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>QazaqPro B2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Unbounded:wght@600;700&display=swap">
+<style>
+/* Layout: compact app shell — sticky header with score, scrollable tab bar, single content column (max 1080px), cards only where they mark a separate object */
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f1f5f8;
+  --hero: #eef6fb;
+  --ink: #12212c;
+  --muted: #4d6170;
+  --line: #d6e0e7;
+  --accent: #0a74ad;
+  --accent-ink: #ffffff;
+  --accent-soft: #dbecf6;
+  --gold: #a96d12;
+  --gold-soft: #fbefd6;
+  --ok: #1b7448;
+  --ok-soft: #daf1e4;
+  --bad: #b2352a;
+  --bad-soft: #f8e0dd;
+  --hint: #eef2f5;
+  --header: #ffffff;
+  --header-ink: #12212c;
+  --header-muted: #4d6170;
+  --qr-bg: #ffffff;
+  --qr-ink: #0f2838;
+  --f-display: "Unbounded", "Noto Sans", system-ui, sans-serif;
+  --f-body: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --r: 12px;
+}
+/* Single light theme by request: white everywhere, regardless of the viewer's dark mode */
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.55; }
+h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Header */
+header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--header); color: var(--header-ink); border-bottom: 1px solid var(--line); }
+.head-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; padding-block: 10px; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-mark { width: 36px; height: 36px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-family: var(--f-display); font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.brand-name { font-family: var(--f-display); font-size: 15px; font-weight: 700; letter-spacing: 0.2px; }
+.brand-sub { display: block; font-size: 11.5px; color: var(--header-muted); }
+.hud { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pill { border: 1px solid color-mix(in srgb, var(--header-ink) 22%, transparent); border-radius: 999px; padding: 3px 10px; font-size: 12.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pill b { color: var(--gold); }
+.ru-btn { background: transparent; border: 1px solid var(--gold); color: var(--header-ink); border-radius: 999px; padding: 3px 10px; font-size: 12.5px; font-weight: 600; }
+.ru-btn[aria-pressed="false"] { opacity: 0.6; }
+
+nav.tabs { background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--head-h, 58px)); z-index: 19; }
+.tab-row { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.tab-row::-webkit-scrollbar { display: none; }
+.tab { background: none; border: 0; border-bottom: 3px solid transparent; padding: 12px 12px 10px; font-size: 14px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.tab .n { font-variant-numeric: tabular-nums; color: var(--accent); margin-right: 4px; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+main { padding-block: 22px 60px; }
+section.panel { display: grid; gap: 18px; }
+
+.eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--accent); }
+.h-sec { font-family: var(--f-display); font-size: 20px; font-weight: 700; line-height: 1.3; }
+.lead { color: var(--muted); max-width: 68ch; }
+.ru { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); background: var(--hint); border-left: 3px solid var(--line); padding: 5px 10px; border-radius: 0 6px 6px 0; }
+body.hide-ru .ru { display: none; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; min-width: 0; }
+.card h3 { font-size: 17px; margin-bottom: 6px; }
+.card p + p { margin-top: 8px; }
+.grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+.tag { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin-bottom: 8px; }
+.t-blue { background: var(--accent-soft); color: var(--accent); }
+.t-gold { background: var(--gold-soft); color: var(--gold); }
+.t-ok { background: var(--ok-soft); color: var(--ok); }
+.t-bad { background: var(--bad-soft); color: var(--bad); }
+
+.btn { border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 700; font-size: 14px; background: var(--accent); color: var(--accent-ink); }
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 600; }
+.btn.small { padding: 6px 11px; font-size: 12.5px; }
+.btn:disabled { opacity: 0.45; cursor: default; filter: none; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+/* Hero */
+.hero { background: var(--hero); color: var(--header-ink); border: 1px solid var(--accent-soft); border-radius: 16px; padding: 24px; display: grid; gap: 20px; grid-template-columns: 1.5fr 1fr; align-items: center; }
+@media (max-width: 760px) { .hero { grid-template-columns: 1fr; padding: 20px; } }
+.hero h1 { font-family: var(--f-display); font-size: clamp(20px, 4.4vw, 27px); line-height: 1.3; margin: 8px 0 10px; }
+.hero p { color: var(--header-muted); }
+.hero .eyebrow { color: var(--gold); }
+.hero .ru { background: color-mix(in srgb, var(--header-ink) 8%, transparent); color: var(--header-muted); border-left-color: var(--gold); }
+.hero .btn.ghost { color: var(--header-ink); border-color: color-mix(in srgb, var(--header-ink) 30%, transparent); }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+.fact .num { font-family: var(--f-display); font-size: 20px; color: var(--gold); display: block; font-variant-numeric: tabular-nums; }
+.fact .lbl { font-size: 12px; color: var(--header-muted); }
+
+/* Tables */
+.tbl-wrap { overflow-x: auto; margin-top: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 560px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); background: var(--surface-2); }
+td.pts { font-variant-numeric: tabular-nums; font-weight: 700; }
+
+/* Game */
+.levels { display: grid; gap: 10px; grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 700px) { .levels { grid-template-columns: 1fr; } }
+.lvl { text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); padding: 12px 14px; display: grid; gap: 3px; }
+.lvl[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.lvl .top { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.4px; }
+.lvl .score { font-variant-numeric: tabular-nums; color: var(--muted); text-transform: none; letter-spacing: 0; }
+.lvl h4 { font-size: 15px; }
+.lvl p { font-size: 12.5px; color: var(--muted); }
+
+.quiz-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; padding-bottom: 10px; margin-bottom: 14px; border-bottom: 1px solid var(--line); font-size: 13px; }
+.quiz-head .cnt { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; }
+.quiz-head .typ { color: var(--muted); }
+.q-prompt { font-size: 17px; font-weight: 700; line-height: 1.4; }
+.q-sentence { margin: 14px 0; background: var(--surface-2); border-left: 4px solid var(--accent); padding: 12px 14px; border-radius: 0 10px 10px 0; }
+.opts { display: grid; gap: 8px; }
+.opt { display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--surface); border: 2px solid var(--line); border-radius: 10px; padding: 11px 14px; font-size: 15px; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt:disabled { cursor: default; }
+.opt .key { font-weight: 700; color: var(--muted); flex-shrink: 0; }
+.opt.correct { border-color: var(--ok); background: var(--ok-soft); }
+.opt.correct .key { color: var(--ok); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.wrong .key { color: var(--bad); }
+.explain { margin-top: 14px; border-radius: 10px; padding: 14px; background: var(--ok-soft); }
+.explain.miss { background: var(--bad-soft); }
+.explain h5 { margin: 0 0 4px; font-size: 14px; }
+.quiz-nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-top: 16px; align-items: center; }
+.quiz-nav .note { font-size: 12.5px; color: var(--muted); }
+.done-banner { background: var(--gold-soft); border: 1px solid var(--gold); border-radius: var(--r); padding: 14px 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+
+.badges { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.badge { display: flex; gap: 12px; align-items: center; border: 1px dashed var(--line); border-radius: var(--r); padding: 12px; background: var(--surface); opacity: 0.62; }
+.badge.on { opacity: 1; border: 2px solid var(--gold); background: var(--gold-soft); }
+.badge .ico { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--surface-2); font-family: var(--f-display); font-size: 13px; color: var(--muted); flex-shrink: 0; }
+.badge.on .ico { background: var(--gold); color: var(--surface); }
+.badge strong { display: block; font-size: 14px; }
+.badge span { font-size: 12.5px; color: var(--muted); }
+
+.field { display: grid; gap: 5px; min-width: 0; }
+.field label { font-size: 13px; font-weight: 700; color: var(--accent); }
+.field select, .field input, .field textarea { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; font-size: 14.5px; }
+.pops-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); margin: 14px 0; }
+.pops-out { background: var(--accent-soft); border-radius: 10px; padding: 14px; display: grid; gap: 10px; }
+.pops-out p { font-size: 15.5px; font-weight: 600; }
+
+/* QR + chat */
+.qr-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.qr-card { display: flex; gap: 14px; text-align: left; align-items: flex-start; background: var(--surface); border: 2px solid var(--line); border-radius: var(--r); padding: 14px; min-width: 0; }
+.qr-card[aria-pressed="true"] { border-color: var(--accent); }
+.qr-box { width: 84px; height: 84px; flex-shrink: 0; background: var(--qr-bg); border-radius: 8px; padding: 4px; display: grid; place-items: center; border: 1px solid var(--line); }
+.qr-box img, .qr-box canvas { width: 76px !important; height: 76px !important; display: block; }
+.qr-box .nolink { font-size: 10px; color: #4d6170; text-align: center; line-height: 1.25; }
+.qr-card h4 { font-size: 15px; margin-bottom: 2px; }
+.qr-card p { font-size: 13px; color: var(--muted); }
+.qr-meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.qr-meta .done { font-size: 12px; font-weight: 700; color: var(--ok); font-variant-numeric: tabular-nums; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); font-size: 12.5px; font-weight: 600; text-decoration: underline; }
+
+.chat { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.chat-head { background: var(--hero); color: var(--header-ink); border-bottom: 1px solid var(--line); padding: 14px 18px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center; }
+.chat-head small { display: block; font-size: 11.5px; color: var(--gold); font-weight: 700; letter-spacing: 0.5px; }
+.chat-head h3 { font-size: 16px; }
+.chat-log { padding: 16px; max-height: 440px; overflow-y: auto; background: var(--surface-2); display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 86%; padding: 10px 14px; border-radius: 14px; font-size: 14.5px; }
+.msg.bot { background: var(--surface); border: 1px solid var(--line); align-self: flex-start; border-bottom-left-radius: 4px; }
+.msg.me { background: var(--accent); color: var(--accent-ink); align-self: flex-end; border-bottom-right-radius: 4px; }
+.msg.fb { align-self: center; max-width: 96%; font-size: 13.5px; background: var(--gold-soft); color: var(--ink); border: 1px solid var(--gold); }
+.msg.fb.weak { background: var(--bad-soft); border-color: var(--bad); }
+.chat-ctl { padding: 14px 16px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
+.chat-ctl .lbl { font-size: 13px; font-weight: 700; color: var(--muted); }
+
+/* Vocab */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.filters input { flex: 1 1 240px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 13px; font-size: 13px; font-weight: 600; }
+.chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.vocab .ru-tr { font-weight: 600; color: var(--accent); }
+.vocab .ex { margin-top: 8px; font-size: 13.5px; background: var(--surface-2); padding: 9px 11px; border-radius: 8px; }
+.empty { color: var(--muted); padding: 18px; text-align: center; border: 1px dashed var(--line); border-radius: var(--r); }
+
+/* Testing */
+.steps { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 6px; }
+.res-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: 10px; margin: 12px 0; }
+.res { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; }
+.res .v { font-family: var(--f-display); font-size: 20px; font-variant-numeric: tabular-nums; display: block; }
+.res .k { font-size: 12px; color: var(--muted); }
+.stars { display: flex; gap: 4px; }
+.star { width: 40px; height: 40px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.star[aria-pressed="true"] { background: var(--gold); border-color: var(--gold); color: var(--surface); }
+.copy-area { width: 100%; min-height: 150px; margin-top: 10px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 10px; }
+.status { font-size: 13px; font-weight: 600; color: var(--ok); }
+
+/* QR modal */
+.modal { position: fixed; inset: 0; z-index: 50; background: color-mix(in srgb, #000 62%, transparent); display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.modal-box { background: var(--surface); border-radius: 16px; padding: 20px; width: min(100%, 340px); display: grid; gap: 12px; justify-items: center; text-align: center; }
+.big-qr { background: var(--qr-bg); padding: 12px; border-radius: 12px; }
+.big-qr img, .big-qr canvas { width: 240px !important; height: 240px !important; display: block; }
+
+@media (prefers-reduced-motion: no-preference) {
+  section.panel:not([hidden]) { animation: rise 0.22s ease; }
+  @keyframes rise { from { transform: translateY(5px); opacity: 0.6; } to { transform: none; opacity: 1; } }
+}
+</style>
+
+</head>
+<body>
+<header id="hdr">
+  <div class="wrap head-row">
+    <div class="brand">
+      <div class="brand-mark">QP</div>
+      <div>
+        <span class="brand-name">QazaqPro B2</span>
+        <span class="brand-sub">Нархоз • БОӨЖ1 цифрлық жобасы</span>
+      </div>
+    </div>
+    <div class="hud">
+      <span class="pill">XP <b id="hud-xp">0</b></span>
+      <span class="pill">Серия <b id="hud-streak">0</b></span>
+      <span class="pill">Бейдж <b id="hud-badges">0/4</b></span>
+      <button class="ru-btn" id="ru-btn" aria-pressed="true" onclick="toggleRu()">RU кеңес: қосулы</button>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Бөлімдер">
+  <div class="wrap tab-row" role="tablist">
+    <button class="tab" role="tab" data-tab="passport" aria-selected="true"><span class="n">1</span>Жоба</button>
+    <button class="tab" role="tab" data-tab="game" aria-selected="false"><span class="n">2</span>«Сөзден сөйлемге»</button>
+    <button class="tab" role="tab" data-tab="qr" aria-selected="false"><span class="n">3</span>QR-диалогтар</button>
+    <button class="tab" role="tab" data-tab="vocab" aria-selected="false"><span class="n">4</span>B2 сөздік</button>
+    <button class="tab" role="tab" data-tab="testing" aria-selected="false"><span class="n">5</span>Тестілеу</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ========== 1. PASSPORT ========== -->
+<section class="panel" id="tab-passport">
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Мемлекеттік тілді оқытуға арналған цифрлық өнім</span>
+      <h1>Қазақ тілін B2 деңгейінде ойын және шынайы жағдаяттар арқылы меңгеру</h1>
+      <p><strong style="color:var(--header-ink)">QazaqPro B2</strong> — университет студенттеріне қазақ тілінде дәлелді, сауатты әрі сыпайы сөйлеуге көмектесетін веб-прототип. Телефоннан қосымша орнатусыз ашылады.</p>
+      <span class="ru">RU: Основное направление — №2 «Сөзден сөйлемге» (игра из 3 уровней, 12 вопросов с разбором). Дополнительный модуль — №3 «QR-қазақша»: 5 QR-кодов, каждый открывает ситуативный диалог из 5 шагов.</span>
+      <div class="row" style="margin-top:16px">
+        <button class="btn" onclick="openTab('game')">Ойынды бастау</button>
+        <button class="btn ghost" onclick="openTab('qr')">QR-локациялар</button>
+      </div>
+    </div>
+    <div class="facts">
+      <div class="fact"><span class="num">3 × 4</span><span class="lbl">деңгей × сұрақ, әр жауапқа түсіндірме</span></div>
+      <div class="fact"><span class="num">3 түрі</span><span class="lbl">лексика, грамматика, аргументация</span></div>
+      <div class="fact"><span class="num">5 QR</span><span class="lbl">сканерленетін локация-кодтар</span></div>
+      <div class="fact"><span class="num">12</span><span class="lbl">B2 сөз бен байланыстырушы орам</span></div>
+    </div>
+  </div>
+
+  <div>
+    <span class="eyebrow">Критерий 1–2</span>
+    <h2 class="h-sec">Мәселе және шешім</h2>
+    <p class="lead">Қазақ тілін B2 деңгейінде үйренушілер кездесетін екі негізгі қиындық және біздің цифрлық шешіміміз.</p>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <span class="tag t-bad">1-қиындық</span>
+      <h3>Пассивті сөздік қор</h3>
+      <p>Студенттер күнделікті тұрмыстық сөйлеуді түсінгенімен, университетте немесе жұмыс сұхбатында B2 деңгейіндегі дәлелді пікірді (қыстырма сөздер, күрделі құрмалас сөйлемдер) құрастыруға қиналады.</p>
+      <span class="ru">RU: Студенты понимают бытовую речь, но теряются, когда нужно аргументированно высказаться на уровне B2.</span>
+    </div>
+    <div class="card">
+      <span class="tag t-gold">2-қиындық</span>
+      <h3>Теория мен өмірдің алшақтығы</h3>
+      <p>Оқулықтағы жаттығулар кампус, кітапхана, қоғамдық көлік, емхана сияқты нақты жағдаяттармен байланыспаған және қатені бірден түсіндірмейді.</p>
+      <span class="ru">RU: Учебники оторваны от реальных ситуаций и не дают мгновенного разбора ошибок.</span>
+    </div>
+    <div class="card">
+      <span class="tag t-ok">Шешім</span>
+      <h3>Ойын + QR-жағдаяттар</h3>
+      <p>Мақсатты аудитория: 18–25 жастағы студенттер, B1→B2. «Сөзден сөйлемге» ойыны лексика мен грамматиканы бекітеді, ал QR-кодтар үйренгенді шынайы диалогта қолдануға мүмкіндік береді.</p>
+      <span class="ru">RU: Игра закрепляет лексику и грамматику, QR-диалоги переносят их в реальные ситуации.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag t-blue">30 балл</span>
+    <h3>Бағалау критерийлеріне сәйкестік</h3>
+    <span class="ru">RU: Кнопки справа сразу открывают нужный раздел — удобно на защите.</span>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>№</th><th>Критерий</th><th>Балл</th><th>Прототипте</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Мәселенің өзектілігі, мақсат пен аудиторияның нақтылығы</td><td class="pts">4</td><td>2 қиындық, аудитория 18–25 жас, B1→B2</td><td>осы бет</td></tr>
+          <tr><td>2</td><td>Идеяның жаңашылдығы және цифрлық технологияны орынды таңдау</td><td class="pts">5</td><td>Веб-прототип: XP, серия, бейдждер, сканерленетін QR</td><td><button class="btn small" onclick="openTab('game')">Ашу</button></td></tr>
+          <tr><td>3</td><td>Прототиптің функционалдығы және қолдануға ыңғайлылығы</td><td class="pts">6</td><td>12 сұрақ, 5 QR-диалог, телефонға бейімделген</td><td><button class="btn small" onclick="openTab('qr')">Ашу</button></td></tr>
+          <tr><td>4</td><td>B2 деңгейіне сай тілдік материалдың сапасы мен дұрыстығы</td><td class="pts">5</td><td>3 тапсырма түрі + ПОПС конструкторы + B2 сөздік</td><td><button class="btn small" onclick="openTab('vocab')">Ашу</button></td></tr>
+          <tr><td>5</td><td>Тестілеу, кері байланыс және тиімділікті дәлелдеу</td><td class="pts">4</td><td>Әр тестердің нәтиже карточкасы және пікір формасы</td><td><button class="btn small" onclick="openTab('testing')">Ашу</button></td></tr>
+          <tr><td>6</td><td>Топтық ынтымақтастық және әр қатысушының үлесі</td><td class="pts">3</td><td>Рөлдер бөлінісі қорғауда көрсетіледі</td><td>қорғауда</td></tr>
+          <tr><td>7</td><td>Презентация, сөйлеу мәдениеті және сұрақтарға жауап беру</td><td class="pts">3</td><td>Ауызша қорғау</td><td>қорғауда</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 2. GAME ========== -->
+<section class="panel" id="tab-game" hidden>
+  <div>
+    <span class="eyebrow">Негізгі бағыт №2</span>
+    <h2 class="h-sec">«Сөзден сөйлемге» — үш деңгейлі ойын</h2>
+    <p class="lead">12 сұрақ, 3 тапсырма түрі, әр жауаптан кейін түсіндірме. Әр сұраққа бір рет қана жауап беріледі, жауап нұсқаларының реті әр ашқан сайын ауысады.</p>
+  </div>
+
+  <div class="levels">
+    <button class="lvl" data-lvl="1" aria-pressed="true" onclick="selectLevel(1)">
+      <span class="top">1-деңгей · Лексика <span class="score" id="lvl-score-1">0/4</span></span>
+      <h4>Іскерлік және академиялық сөздер</h4>
+      <p>B2 терминдері мен тұрақты тіркестер</p>
+    </button>
+    <button class="lvl" data-lvl="2" aria-pressed="false" onclick="selectLevel(2)">
+      <span class="top">2-деңгей · Грамматика <span class="score" id="lvl-score-2">0/4</span></span>
+      <h4>Ойды байланыстыру</h4>
+      <p>Қыстырма сөздер, себеп және қарсылықты сөйлемдер</p>
+    </button>
+    <button class="lvl" data-lvl="3" aria-pressed="false" onclick="selectLevel(3)">
+      <span class="top">3-деңгей · Аргументация <span class="score" id="lvl-score-3">0/4</span></span>
+      <h4>Жағдаятқа сай дәлелді жауап</h4>
+      <p>Университетте және жұмыста сауатты сөйлеу</p>
+    </button>
+  </div>
+
+  <div class="done-banner" id="game-done" hidden>
+    <div><strong id="game-done-text">Ойын аяқталды</strong><span class="ru">RU: Все 12 вопросов пройдены. Результат сохранён в разделе «Тестілеу».</span></div>
+    <button class="btn" onclick="openTab('testing')">Нәтижені көру</button>
+  </div>
+
+  <div class="card">
+    <div class="quiz-head">
+      <span class="cnt" id="q-counter">1-деңгей • 1/4</span>
+      <span class="typ" id="q-type"></span>
+    </div>
+    <div class="q-prompt" id="q-prompt"></div>
+    <span class="ru" id="q-ru"></span>
+    <div class="q-sentence" id="q-sentence"></div>
+    <div class="opts" id="q-options"></div>
+    <div class="explain" id="q-explain" hidden>
+      <h5 id="q-explain-title"></h5>
+      <p id="q-explain-text"></p>
+      <span class="ru" id="q-explain-ru"></span>
+    </div>
+    <div class="quiz-nav">
+      <button class="btn ghost" id="btn-prev" onclick="prevQuestion()">← Алдыңғы</button>
+      <span class="note">Дұрыс жауап: +25 XP</span>
+      <button class="btn" id="btn-next" onclick="nextQuestion()">Келесі →</button>
+    </div>
+  </div>
+
+  <div>
+    <h3 style="font-size:17px;margin-bottom:10px">Жетістіктер</h3>
+    <div class="badges">
+      <div class="badge" id="badge-1"><div class="ico">L1</div><div><strong>Сөз шебері</strong><span>1-деңгейді кемінде 3/4 нәтижемен аяқтау</span></div></div>
+      <div class="badge" id="badge-2"><div class="ico">L2</div><div><strong>Грамматика сарапшысы</strong><span>2-деңгейді кемінде 3/4 нәтижемен аяқтау</span></div></div>
+      <div class="badge" id="badge-3"><div class="ico">L3</div><div><strong>Пікірталас көшбасшысы</strong><span>3-деңгейді кемінде 3/4 нәтижемен аяқтау</span></div></div>
+      <div class="badge" id="badge-4"><div class="ico">QR</div><div><strong>Қала саяхатшысы</strong><span>Барлық 5 QR-диалогты аяқтау</span></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag t-ok">Қосымша тренажер</span>
+    <h3>ПОПС: дәлелді пікір конструкторы</h3>
+    <p>Позиция → Обоснование → Пример → Следствие. Төрт бөлікті таңдап, B2 деңгейіндегі дәлелді мәтін құрастырыңыз, содан кейін оны дауыстап оқып, өз мысалыңызбен толықтырыңыз.</p>
+    <span class="ru">RU: Конструктор собирает аргументированное высказывание из 4 частей по формуле ПОПС.</span>
+    <div class="pops-grid">
+      <div class="field"><label for="pops-topic">1. Позиция</label>
+        <select id="pops-topic" onchange="updatePops()">
+          <option value="цифрлық технологиялар қазақ тілін үйренуді едәуір жеделдетеді">Цифрлық технологиялар тіл үйренуді жеделдетеді</option>
+          <option value="гибридті оқу форматы студенттерге уақытты тиімді басқаруға мүмкіндік береді">Гибридті оқу уақытты тиімді басқаруға көмектеседі</option>
+          <option value="жасанды интеллект болашақ мамандардың негізгі құралына айналады">Жасанды интеллект — мамандардың негізгі құралы</option>
+        </select>
+      </div>
+      <div class="field"><label for="pops-reason">2. Дәлел</label>
+        <select id="pops-reason" onchange="updatePops()">
+          <option value="өйткені интерактивті тапсырмалар мен жедел кері байланыс теорияны тәжірибемен ұштастырады">Теорияны тәжірибемен ұштастырады</option>
+          <option value="себебі цифрлық платформалар кез келген уақытта өз қарқыныңмен дайындалуға жағдай жасайды">Өз қарқыныңмен оқуға жағдай жасайды</option>
+          <option value="себебі бұл тәсіл тілдік тосқауылды азайтып, кәсіби сөздік қорды жүйелі түрде байытады">Тілдік тосқауылды азайтады</option>
+        </select>
+      </div>
+      <div class="field"><label for="pops-example">3. Мысал</label>
+        <select id="pops-example" onchange="updatePops()">
+          <option value="күнделікті 15 минуттық ойын форматындағы жаттығулар жаңа сөздерді есте сақтауды жеңілдетеді">15 минуттық ойын жаттығулары</option>
+          <option value="QR-код арқылы ашылатын тапсырмаларды автобуста немесе үзіліс кезінде де орындауға болады">QR-тапсырмаларды жолда орындау</option>
+        </select>
+      </div>
+      <div class="field"><label for="pops-conclusion">4. Қорытынды</label>
+        <select id="pops-conclusion" onchange="updatePops()">
+          <option value="мемлекеттік тілді заманауи технологиялар арқылы оқыту — бәсекеге қабілетті маман даярлаудың тиімді жолы">Бәсекеге қабілетті маман даярлау жолы</option>
+          <option value="осындай интерактивті шешімдерді оқу үдерісіне кеңінен енгізу қажет деп есептеймін">Оқу үдерісіне кеңінен енгізу қажет</option>
+        </select>
+      </div>
+    </div>
+    <div class="pops-out">
+      <p id="pops-text"></p>
+      <div class="row">
+        <button class="btn" id="pops-btn" onclick="scorePops()">Мәтінді дауыстап оқыдым (+50 XP)</button>
+        <span class="status" id="pops-status"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 3. QR ========== -->
+<section class="panel" id="tab-qr" hidden>
+  <div>
+    <span class="eyebrow">Қосымша модуль №3</span>
+    <h2 class="h-sec">«QR-қазақша»: 5 локация, 5 диалог</h2>
+    <p class="lead">Әр QR-код телефон камерасымен сканерленеді және сол локацияның диалогын ашады. Кодты үлкейтіп, басып шығаруға немесе экранға шығаруға болады.</p>
+    <span class="ru">RU: Каждый QR реально сканируется и открывает свой диалог. Нажмите «Үлкейту», чтобы показать код крупно.</span>
+  </div>
+  <div class="qr-grid" id="qr-grid"></div>
+
+  <div class="chat">
+    <div class="chat-head">
+      <div><small id="sim-tag">ЛОКАЦИЯ 1</small><h3 id="sim-title"></h3></div>
+      <span class="pill" id="sim-step">Қадам 1/5</span>
+    </div>
+    <div class="chat-log" id="chat-log" aria-live="polite"></div>
+    <div class="chat-ctl">
+      <div class="lbl" id="chat-lbl">Ең сауатты әрі сыпайы жауапты таңдаңыз:</div>
+      <div class="opts" id="chat-opts"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 4. VOCAB ========== -->
+<section class="panel" id="tab-vocab" hidden>
+  <div>
+    <span class="eyebrow">Критерий 4</span>
+    <h2 class="h-sec">B2 сөздік базасы</h2>
+    <p class="lead">Академиялық лексика, пікірталасқа арналған байланыстырушы сөздер және мысал сөйлемдер.</p>
+  </div>
+  <div class="filters">
+    <input type="search" id="vocab-search" placeholder="Іздеу: бәсеке, қорыта, однако…" oninput="renderVocab()" aria-label="Сөздіктен іздеу">
+    <button class="chip" data-cat="all" aria-pressed="true" onclick="filterVocab('all')">Барлығы</button>
+    <button class="chip" data-cat="Іскерлік лексика" aria-pressed="false" onclick="filterVocab('Іскерлік лексика')">Іскерлік лексика</button>
+    <button class="chip" data-cat="Ойды байланыстыру" aria-pressed="false" onclick="filterVocab('Ойды байланыстыру')">Ойды байланыстыру</button>
+  </div>
+  <div class="grid" id="vocab-grid"></div>
+</section>
+
+<!-- ========== 5. TESTING ========== -->
+<section class="panel" id="tab-testing" hidden>
+  <div>
+    <span class="eyebrow">Критерий 5</span>
+    <h2 class="h-sec">Тестілеу және кері байланыс</h2>
+    <p class="lead">Прототипті басқа студенттерге орындатып, олардың нәтижесі мен пікірін жинаймыз.</p>
+  </div>
+
+  <div class="card">
+    <h3>Сынақ тәртібі</h3>
+    <ol class="steps">
+      <li>Тестер «Сөзден сөйлемге» ойынының 12 сұрағына жауап береді.</li>
+      <li>Кемінде бір QR-кодты сканерлеп, диалогты соңына дейін өтеді.</li>
+      <li>Төмендегі формада прототипті 1–5 балмен бағалап, пікір жазады.</li>
+      <li>«Нәтижені көшіру» батырмасын басып, мәтінді топ чатына жібереді.</li>
+      <li>Келесі тестерге бермес бұрын «Келесі тестер» батырмасын басыңыз.</li>
+    </ol>
+    <span class="ru">RU: Каждый тестер проходит игру и хотя бы один QR-диалог, ставит оценку и отправляет скопированный результат в чат группы. Итоговые цифры собираете вы сами.</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <span class="tag t-blue">Осы тестердің нәтижесі</span>
+      <h3>Нәтиже</h3>
+      <div class="res-grid">
+        <div class="res"><span class="v" id="r-l1">0/4</span><span class="k">1-деңгей</span></div>
+        <div class="res"><span class="v" id="r-l2">0/4</span><span class="k">2-деңгей</span></div>
+        <div class="res"><span class="v" id="r-l3">0/4</span><span class="k">3-деңгей</span></div>
+        <div class="res"><span class="v" id="r-total">—</span><span class="k">Ойын, барлығы</span></div>
+        <div class="res"><span class="v" id="r-qr">0/5</span><span class="k">QR-диалог</span></div>
+        <div class="res"><span class="v" id="r-qrscore">—</span><span class="k">Диалог, орташа</span></div>
+      </div>
+      <p style="font-size:13px;color:var(--muted)">Жауап берілмеген сұрақтар есептелмейді.</p>
+    </div>
+
+    <div class="card">
+      <span class="tag t-ok">Пікір формасы</span>
+      <h3>Прототипті бағалау</h3>
+      <div style="display:grid;gap:12px;margin-top:10px">
+        <div class="field"><label for="fb-name">Аты-жөні, тобы</label><input id="fb-name" type="text" placeholder="Мысалы: Әлихан С., ХҚ 1-курс" oninput="buildReport()"></div>
+        <div class="field"><label>Жалпы баға</label>
+          <div class="stars" id="stars">
+            <button class="star" aria-pressed="false" onclick="setRating(1)">1</button>
+            <button class="star" aria-pressed="false" onclick="setRating(2)">2</button>
+            <button class="star" aria-pressed="false" onclick="setRating(3)">3</button>
+            <button class="star" aria-pressed="false" onclick="setRating(4)">4</button>
+            <button class="star" aria-pressed="false" onclick="setRating(5)">5</button>
+          </div>
+        </div>
+        <div class="field"><label for="fb-module">Ең пайдалы бөлім</label>
+          <select id="fb-module" onchange="buildReport()">
+            <option value="">— таңдаңыз —</option>
+            <option>«Сөзден сөйлемге» ойыны</option>
+            <option>QR-диалогтар</option>
+            <option>ПОПС конструкторы</option>
+            <option>B2 сөздік</option>
+          </select>
+        </div>
+        <div class="field"><label for="fb-hard">Не қиын немесе түсініксіз болды?</label><textarea id="fb-hard" rows="2" oninput="buildReport()"></textarea></div>
+        <div class="field"><label for="fb-text">Ұсыныс немесе пікір</label><textarea id="fb-text" rows="2" oninput="buildReport()"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Нәтижені жіберу</h3>
+    <p style="color:var(--muted);font-size:14px">Мәтінді көшіріп, топ чатына жіберіңіз.</p>
+    <textarea class="copy-area" id="report" readonly aria-label="Нәтиже мәтіні"></textarea>
+    <div class="row" style="margin-top:10px">
+      <button class="btn" onclick="copyReport()">Нәтижені көшіру</button>
+      <button class="btn ghost" id="reset-btn" onclick="resetAll()">Келесі тестер</button>
+      <span class="status" id="copy-status"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag t-gold">Жиынтық</span>
+    <h3>Фокус-топ нәтижелері</h3>
+    <p style="color:var(--muted)">Сынақ әлі жүргізілген жоқ. Тестерлердің нәтижелері жиналғаннан кейін бұл кесте толтырылады.</p>
+    <span class="ru">RU: Сюда вносятся реальные итоги: число тестеров, средний балл, средняя оценка и выводы.</span>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Көрсеткіш</th><th>Мәні</th></tr></thead>
+        <tbody>
+          <tr><td>Тестерлер саны</td><td>—</td></tr>
+          <tr><td>Ойын, орташа нәтиже (12 сұрақтан)</td><td>—</td></tr>
+          <tr><td>Ең қиын деңгей</td><td>—</td></tr>
+          <tr><td>QR-диалог, орташа балл (100-ден)</td><td>—</td></tr>
+          <tr><td>Орташа баға (5-тен)</td><td>—</td></tr>
+          <tr><td>Тестерлер ұсынған өзгерістер</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="modal" id="qr-modal" hidden onclick="if(event.target===this)closeQr()">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
+    <h3 id="qr-modal-title" style="font-size:16px"></h3>
+    <div class="big-qr" id="qr-modal-code"></div>
+    <p style="font-size:13px;color:var(--muted)">Басқа телефонның камерасымен сканерлеңіз.</p>
+    <button class="btn" onclick="closeQr()">Жабу</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// Published link of this page; QR codes point to it with #loc1..#loc5
+const BASE_URL = "https://bekztabdolmurat-afk.github.io/qazaqpro-b2/";
+
+// ================= DATA =================
+const QUESTIONS = {
+  1: [
+    { type: "Тапсырма №1: Контекстік лексика",
+      prompt: "Бос орынға мағынасы мен стилі жағынан B2 деңгейіне сай тіркесті таңдаңыз:",
+      ru: "Выберите словосочетание уровня B2 со значением «повышение конкурентоспособности».",
+      sentence: "Жас мамандардың цифрлық сауаттылығы мен мемлекеттік тілді еркін меңгеруі — еңбек нарығындағы ______ негізгі факторы.",
+      options: ["бәсекеге қабілеттілікті арттырудың", "жақсы жұмыс табудың оңай", "көп ақша табу жолының", "жылдам сөйлесіп кетудің"],
+      correct: 0,
+      explain: "«Бәсекеге қабілеттілікті арттыру» — ресми-іскерлік және экономикалық стильдегі негізгі B2 тіркесі.",
+      explainRu: "Остальные варианты разговорные (A2–B1) и не подходят для академического контекста." },
+    { type: "Тапсырма №1: Тұрақты тіркестер",
+      prompt: "«Приоритетное направление» ұғымын қазақша қалай дұрыс айтамыз?",
+      ru: "Как правильно передать понятие «приоритетное направление»?",
+      sentence: "Мемлекеттік тілде сапалы цифрлық контент әзірлеу — жобамыздың ең ______ бірі.",
+      options: ["басым бағыттарының", "бірінші жүретін жолдарының", "үлкен жұмыстарының", "керек заттарының"],
+      correct: 0,
+      explain: "«Басым бағыт» — стратегиялық, ғылыми және іскерлік баяндамаларда қолданылатын ресми тіркес.",
+      explainRu: "«Басым бағыт» = приоритетное направление; «басымдық» = приоритет." },
+    { type: "Тапсырма №1: Синонимдік қатар",
+      prompt: "«Мәселені жан-жақты зерттеу» тіркесінің академиялық синонимін табыңыз:",
+      ru: "Найдите академический синоним к выражению «всесторонне исследовать проблему».",
+      sentence: "Топ мүшелері студенттердің тіл үйренудегі қиындықтарын ______ үшін сауалнама жүргізді.",
+      options: ["кешенді түрде талдау", "тез көріп шығу", "бірге сұрап білу", "жай қарап өту"],
+      correct: 0,
+      explain: "«Кешенді түрде талдау» — ғылыми-зерттеу және жобалық жұмыстарда қолданылатын тіркес.",
+      explainRu: "«Талдау» (анализировать) + «кешенді түрде» (комплексно) — уверенная лексика B2." },
+    { type: "Тапсырма №1: Кәсіби коммуникация",
+      prompt: "«Установить долгосрочное сотрудничество» дегенді қалай жеткіземіз?",
+      ru: "Выберите точный перевод выражения «установить долгосрочное сотрудничество».",
+      sentence: "Университет жетекші компаниялармен ______ мақсатында бірлескен жобаларды іске қосты.",
+      options: ["ұзақ мерзімді ынтымақтастық орнату", "көп уақыт бірге дос болу", "ұзақ жылдар бірге сөйлесу", "жақсы таныс болып жүру"],
+      correct: 0,
+      explain: "«Ұзақ мерзімді ынтымақтастық орнату» — ресми келіссөздер мен іскерлік хат алмасудағы стандарт тіркес.",
+      explainRu: "«Ынтымақтастық» — сотрудничество, «ұзақ мерзімді» — долгосрочный." }
+  ],
+  2: [
+    { type: "Тапсырма №2: Қарсылықты құрмалас сөйлем",
+      prompt: "Сөйлемді дұрыс байланыстыратын сөзді таңдаңыз:",
+      ru: "Выберите связку со значением «несмотря на…» (после дательного падежа -ға/-ге).",
+      sentence: "Жобаға берілген уақыттың тығыз болғанына ______, топ барлық модульді толық аяқтады.",
+      options: ["қарамастан", "байланысты", "арқасында", "салдарынан"],
+      correct: 0,
+      explain: "Барыс септігінен (-ға/-ге/-на/-не) кейін келетін «қарамастан» қарсылықты мағына береді.",
+      explainRu: "Конструкция «-ға/-ге қарамастан» = «несмотря на» — важный маркер грамматики B2." },
+    { type: "Тапсырма №2: Қыстырма сөздер",
+      prompt: "Пікірге қосымша дәлел қосу үшін қай тіркес қолданылады?",
+      ru: "Какое вводное выражение добавляет второй аргумент («кроме того, наряду с этим»)?",
+      sentence: "Веб-қосымша студенттердің сөздік қорын байытады. ______, ол сөйлеу қорқынышын жеңуге көмектеседі.",
+      options: ["Сонымен қатар", "Керісінше", "Өкінішке орай", "Бір сөзбен"],
+      correct: 0,
+      explain: "«Сонымен қатар» аргументация барысында екінші маңызды дәлелді қосады.",
+      explainRu: "«Керісінше» = наоборот, «Сонымен қатар» = кроме того." },
+    { type: "Тапсырма №2: Себеп бағыныңқы сөйлем",
+      prompt: "Себеп мәнін беретін дұрыс тұлғаны таңдаңыз:",
+      ru: "Выберите форму со значением причины («поскольку задания представлены в игровом формате»).",
+      sentence: "Тапсырмалар ойын форматында ______, студенттер материалды жалықпай әрі тез меңгереді.",
+      options: ["ұсынылғандықтан", "ұсынылса да", "ұсынылу үшін", "ұсынылғанмен"],
+      correct: 0,
+      explain: "«-ғандықтан/-гендіктен» жұрнағы іс-әрекеттің себебін білдіреді.",
+      explainRu: "«-са да» и «-ғанмен» дают уступку, «-у үшін» — цель." },
+    { type: "Тапсырма №2: Қорытындылау",
+      prompt: "Баяндаманың соңында негізгі ойды түйіндеу үшін қай тіркес орынды?",
+      ru: "Какое выражение подходит для подведения итога («подводя итог»)?",
+      sentence: "______, цифрлық технологияларды тіл үйрету үдерісіне енгізу білім сапасын арттырады.",
+      options: ["Қорыта келгенде", "Мысал ретінде", "Бастапқы кезде", "Айталық"],
+      correct: 0,
+      explain: "«Қорыта келгенде» немесе «Тоқсан ауыз сөздің тобықтай түйіні» — баяндаманы аяқтауға арналған орамдар.",
+      explainRu: "«Қорыта келгенде» = подводя итог; «Айталық» = допустим, например." }
+  ],
+  3: [
+    { type: "Тапсырма №3: Дәлелді жауап",
+      prompt: "Оқытушы: «Неліктен мобильді қосымша емес, веб-сайт жасадыңыздар?» Ең дәлелді жауапты таңдаңыз:",
+      ru: "Выберите самый убедительный ответ уровня B2 на защите проекта.",
+      sentence: "Сұрақ: «Сайттың басқа дайын қосымшалардан қандай артықшылығы бар?»",
+      options: [
+        "Біздің ойымызша, веб-платформа ең қолайлы шешім, себебі ол телефонға жүктеуді қажет етпейді және QR-код арқылы бірден ашылады.",
+        "Өйткені сайт жасау бізге оңай болды, ал қосымшаны ешкім жүктегісі келмейді.",
+        "Біз жай ғана сайтты таңдадық, себебі ол әдемі көрінеді.",
+        "Білмеймін, бірақ сайтта ойнау ыңғайлы сияқты."],
+      correct: 0,
+      explain: "Бірінші нұсқада «Біздің ойымызша… себебі…» құрылымы және екі нақты дәлел бар.",
+      explainRu: "Чёткий тезис + два практических аргумента в официальном регистре." },
+    { type: "Тапсырма №3: Іскерлік сұхбат",
+      prompt: "Стажировкаға сұхбат. Өз тәжірибеңізді B2 деңгейінде қалай таныстырасыз?",
+      ru: "Как грамотно представить свой учебный опыт на собеседовании?",
+      sentence: "HR-менеджер: «Университеттегі жобалық жұмыстар сізге қандай дағды берді?»",
+      options: [
+        "Жобалар барысында мен топта тиімді жұмыс істеуді, деректерді талдауды және ұсынысымды дәлелді түрде қорғауды үйрендім.",
+        "Мен университетте көп оқыдым және достарыммен презентация жасадым.",
+        "Маған сабақтар ұнайды, мен жақсы студентпін, сондықтан мені алыңыз.",
+        "Жобалар қиын болды, бірақ жақсы баға алдық."],
+      correct: 0,
+      explain: "«Топта тиімді жұмыс істеу, деректерді талдау, дәлелді түрде қорғау» — нақты кәсіби дағдыларды атайды.",
+      explainRu: "Глаголы «талдау», «дәлелді түрде қорғау» показывают зрелую профессиональную речь." },
+    { type: "Тапсырма №3: Пікірталас мәдениеті",
+      prompt: "Әріптесіңіздің пікірімен жартылай келісіп, өз ұсынысыңызды қалай сыпайы қосасыз?",
+      ru: "Выберите вежливую формулу частичного согласия с дополнением.",
+      sentence: "Әріптесіңіз: «Жобаға тек грамматикалық ережелерді қосайық.»",
+      options: [
+        "Сіздің пікіріңіз орынды, дегенмен теориямен шектелмей, шынайы диалогтарды да қосқанымыз жөн деп ойлаймын.",
+        "Жоқ, бұл дұрыс емес, грамматика ешкімге қызық емес.",
+        "Жарайды, бірақ маған ондай идея онша ұнамай тұр.",
+        "Грамматиканы қоспай-ақ қояйық, оны бәрі біледі ғой."],
+      correct: 0,
+      explain: "«Сіздің пікіріңіз орынды, дегенмен… жөн деп ойлаймын» — сыйластық пен дәлелді ұсынысты қатар көрсетеді.",
+      explainRu: "Уважение к собеседнику + аргументированное предложение." },
+    { type: "Тапсырма №3: Ресми өтініш",
+      prompt: "Кітапханадан коворкинг бөлмесін брондау үшін қай сөйлем орынды?",
+      ru: "Выберите корректную форму официальной просьбы.",
+      sentence: "Сізге жобаны сынақтан өткізу үшін бөлмені 1 сағатқа брондау керек.",
+      options: [
+        "Сәлеметсіз бе! Жобалық топтың жұмысын талқылау мақсатында бүгін сағат 15:00-ге коворкинг бөлмесін брондауға мүмкіндік бар ма?",
+        "Сәлем! Бізге бүгін бос бөлме керек еді, тез беріңізші.",
+        "Коворкинг ашық па? Біз кіріп отыра береміз бе?",
+        "Маған бір сағатқа зал тауып беріңізші."],
+      correct: 0,
+      explain: "Мақсат нақты («талқылау мақсатында»), сұрау сыпайы («мүмкіндік бар ма?»).",
+      explainRu: "Указаны цель, время и вежливая вопросительная конструкция." }
+  ]
+};
+
+const LOCS = [
+  { code: "NRX-LIB-01", title: "Нархоз кітапханасы", sub: "Топтық жобаға бөлме брондау, әдебиет сұрау",
+    ru: "Библиотека: бронирование зала и поиск источников",
+    steps: [
+      { bot: "Сәлеметсіз бе! Кітапханаға қош келдіңіз. Сізге қандай көмек керек?",
+        good: { t: "Сәлеметсіз бе! БОӨЖ1 жобасы бойынша топтық жұмыс үшін коворкинг бөлмесін брондағымыз келеді.", fb: "Мақсатыңызды нақты әрі сыпайы жеткіздіңіз." },
+        weak: { t: "Сәлем, бізге отыратын бос жер керек еді.", fb: "Ресми ортада «Сәлеметсіз бе» деп, мақсатты нақты айтқан дұрыс." } },
+      { bot: "Әрине! Бөлме сағат нешеге және қанша адамға керек?",
+        good: { t: "Сағат 15:00-ден 16:30-ға дейін, төрт студенттен тұратын топқа керек.", fb: "Уақыт аралығы мен адам саны толық көрсетілді." },
+        weak: { t: "Қазір бір-екі сағатқа, біз төртеуміз.", fb: "Нақты уақыт аралығын («15:00-ден 16:30-ға дейін») айтқан жөн." } },
+      { bot: "№3 бөлмені тіркедім. Жобаға қосымша дереккөздер керек пе?",
+        good: { t: "Иә, қазақ тілін цифрлық технологиялар арқылы оқыту әдістемесі бойынша соңғы басылымдарға қолжетімділік берсеңіз.", fb: "«Қолжетімділік беру», «әдістеме» — B2 лексикасы." },
+        weak: { t: "Иә, қазақ тілі туралы кітап болса беріңізші.", fb: "Тым жалпылама. Тақырыпты нақтылаңыз." } },
+      { bot: "Тағы қандай техникалық құрал керек: проектор ма, интерактивті тақта ма?",
+        good: { t: "Прототипті көрсету үшін интерактивті экранды қосып берсеңіз, өте риза болар едік.", fb: "Шартты рай арқылы сыпайы өтініш жасадыңыз." },
+        weak: { t: "Тек экранды қосып беріңіз, болды.", fb: "«Қосып берсеңіз» сияқты сыпайы форманы қолданыңыз." } },
+      { bot: "Бәрі дайын! Жобаны сәтті қорғауларыңызға тілектеспін!",
+        good: { t: "Көп рақмет! Көрсеткен көмегіңізге ризашылығымызды білдіреміз.", fb: "Сұхбатты іскерлік әдеппен аяқтадыңыз." },
+        weak: { t: "Рақмет, сау болыңыз!", fb: "Дұрыс, бірақ толығырақ алғыс айтуға болады." } }
+    ] },
+  { code: "NRX-SSC-02", title: "Студенттерге қызмет көрсету орталығы", sub: "Анықтама және академиялық ұтқырлық",
+    ru: "Студенческий сервисный центр: справка и академическая мобильность",
+    steps: [
+      { bot: "Қайырлы күн! Қандай мәселе бойынша келдіңіз?",
+        good: { t: "Қайырлы күн! Академиялық ұтқырлық бағдарламасына құжат тапсыру үшін транскрипт пен анықтама алғым келеді.", fb: "«Академиялық ұтқырлық» термині орынды қолданылды." },
+        weak: { t: "Сәлем, маған оқу туралы қағаз керек еді.", fb: "Құжаттың атауын («анықтама», «транскрипт») нақты айтқан жөн." } },
+      { bot: "Құжаттар қай тілде керек? Өтінішті порталда жібердіңіз бе?",
+        good: { t: "Иә, электронды өтінішті кеше жолдадым. Құжаттарды қазақ және ағылшын тілдерінде рәсімдеуіңізді сұраймын.", fb: "«Жолдадым», «рәсімдеуіңізді сұраймын» — іскерлік стиль." },
+        weak: { t: "Кеше сайттан жібердім, қазақша мен ағылшынша керек.", fb: "Ауызекі стиль. Ресми мекемеде «рәсімдеу» сөзі орындырақ." } },
+      { bot: "Конкурсқа тіл деңгейін растайтын құжат қоса тіркеле ме?",
+        good: { t: "Әрине, қазір B2 курсын аяқтап жатырмын, қорытынды емтиханнан кейін растау құжатын жүктеймін.", fb: "Нақты әрі логикалық жауап." },
+        weak: { t: "Иә, кейін беремін.", fb: "Себебін толық сөйлеммен түсіндірген дұрыс." } },
+      { bot: "Құжатты қағаз түрінде аласыз ба, әлде ЭЦҚ-мен жеке кабинетке жіберейік пе?",
+        good: { t: "Уақытты үнемдеу мақсатында цифрлық нұсқасын жеке кабинетіме жолдасаңыз, өте қолайлы болар еді.", fb: "«…мақсатында» құрылымы — B2 белгісі." },
+        weak: { t: "Кабинетке жібере салыңыз.", fb: "Бұйрық райдың орнына шартты сыпайы форманы қолданыңыз." } },
+      { bot: "Құжаттар жақын арада жеке кабинетіңізде пайда болады. Сәттілік!",
+        good: { t: "Жедел көмегіңіз үшін көп рақмет! Жұмысыңызға табыс тілеймін.", fb: "Сұхбат жоғары деңгейде аяқталды." },
+        weak: { t: "Рақмет!", fb: "Дұрыс, бірақ толығырақ жауапқа болады." } }
+    ] },
+  { code: "ALM-TRN-03", title: "Алматы қоғамдық көлігі", sub: "Жол сұрау, QR арқылы төлеу",
+    ru: "Общественный транспорт: маршрут и оплата по QR",
+    steps: [
+      { bot: "Кешіріңіз, Жандосов көшесіндегі Нархоз университетіне қалай жетуге болады?",
+        good: { t: "Мына аялдамадан университетке баратын автобусқа отырыңыз. Бағыт нөмірін 2ГИС қосымшасынан нақтылап алуға болады.", fb: "Нақты және пайдалы бағыттау." },
+        weak: { t: "Кез келген автобусқа міне беріңіз.", fb: "Жолды қалай табуға болатынын нақты айтыңыз." } },
+      { bot: "Рақмет! Жол ақысын QR-код арқылы қалай төлеймін?",
+        good: { t: "Салондағы ONAY QR-белгісін банк қосымшасымен сканерлеп, төлемді растайсыз.", fb: "Цифрлық процесті сауатты түсіндірдіңіз." },
+        weak: { t: "Телефонмен суретке түсіріп төлейсіз.", fb: "«Сканерлеу», «төлемді растау» терминдерін қолданыңыз." } },
+      { bot: "Жолға шамамен қанша уақыт кетеді?",
+        good: { t: "Кептеліс болмаса, қоғамдық көлікке арналған жолақ бар болғандықтан, шамамен 20 минут кетеді.", fb: "«…бар болғандықтан» — себеп-салдарлық B2 құрылымы." },
+        weak: { t: "20 минуттай.", fb: "Дұрыс, бірақ себебін қоса айтқан ұтымды." } },
+      { bot: "Студенттерге жол жүру жеңілдігі бар ма?",
+        good: { t: "Иә, студенттік жеңілдік картасын рәсімдесеңіз, жол ақысы арзанырақ болады.", fb: "«Жеңілдік картасын рәсімдеу» — пайдалы тіркес." },
+        weak: { t: "Иә, студенттерге арзан.", fb: "Жеңілдікті қалай алуға болатынын айтыңыз." } },
+      { bot: "Көп рақмет! Міне, автобус та келіп қалды.",
+        good: { t: "Оқасы жоқ, жолыңыз болсын!", fb: "Қазақы ілтипат сақталды." },
+        weak: { t: "Жақсы, сау болыңыз.", fb: "Дұрыс, «Жолыңыз болсын!» деп тілек айтуға болады." } }
+    ] },
+  { code: "ALM-JOB-04", title: "Стажировкаға сұхбат", sub: "Кәсіби дағдыларды таныстыру",
+    ru: "Собеседование на стажировку в компании",
+    steps: [
+      { bot: "Қайырлы күн! Біздің тағылымдама бағдарламасына неге қызығушылық таныттыңыз?",
+        good: { t: "Қайырлы күн! Сіздердің компанияларыңыз цифрлық қаржы саласында көшбасшы болғандықтан, білімімді нақты жобаларда шыңдағым келеді.", fb: "«Білімімді шыңдау» — жоғары деңгейлі тіркес." },
+        weak: { t: "Маған тәжірибе мен жұмыс керек болған соң келдім.", fb: "Компанияның құндылығын өз мақсатыңызбен байланыстырыңыз." } },
+      { bot: "Клиенттермен қазақ тілінде іскерлік хат алмаса аласыз ба?",
+        good: { t: "Иә, қазақ тілін B2 деңгейінде меңгеріп жүрмін, сондықтан ресми хат алмасу мен кеңес беруді атқара аламын.", fb: "Дәлелді әрі сенімді жауап." },
+        weak: { t: "Иә, сөйлей беремін.", fb: "Кәсіби терминдерді («ресми хат алмасу», «кеңес беру») қолданыңыз." } },
+      { bot: "Клиентпен түсініспеушілік туындаса, мәселені қалай шешесіз?",
+        good: { t: "Алдымен клиенттің уәжін мұқият тыңдап, компания ережесіне сай оңтайлы шешім ұсынамын.", fb: "«Уәжін тыңдау», «оңтайлы шешім» — B2 лексикасы." },
+        weak: { t: "Ашуланбай сөйлесемін немесе бастықты шақырамын.", fb: "Тым қарапайым жауап." } },
+      { bot: "Оқуды тағылымдамамен қалай қатар алып жүресіз?",
+        good: { t: "Сабағым түске дейін болғандықтан, күннің екінші жартысында аптасына 20 сағат жұмыс істей аламын.", fb: "Уақытты нақты жоспарлағаныңыз көрінеді." },
+        weak: { t: "Сабақтан кейін бос кезде келіп тұрамын.", fb: "Нақты сағат санын айтқан сенімдірек." } },
+      { bot: "Жауаптарыңыз ұнады! Келесі аптадан бастай аласыз ба?",
+        good: { t: "Сенім білдіргендеріңізге рақмет! Дүйсенбіден бастауға дайынмын.", fb: "Сұхбатты сәтті аяқтадыңыз." },
+        weak: { t: "Иә, дайынмын, рақмет!", fb: "Дұрыс, бірақ толығырақ жауапқа болады." } }
+    ] },
+  { code: "ALM-MED-05", title: "Қалалық емхана", sub: "Дәрігерге жазылу, белгілерді сипаттау",
+    ru: "Поликлиника: запись к врачу и описание симптомов",
+    steps: [
+      { bot: "Сәлеметсіз бе! Тіркеу бөлімі. Қалай көмектесе аламын?",
+        good: { t: "Сәлеметсіз бе! Терапевттің қабылдауына бүгінге жазылғым келеді, бос уақыт бар ма?", fb: "«Қабылдауына жазылу» — тұрақты ресми тіркес." },
+        weak: { t: "Сәлем, дәрігерге кірейін деп едім.", fb: "«Қабылдауға жазылу» тіркесін қолданыңыз." } },
+      { bot: "Сағат 16:20-ға бос орын бар. Не мазалайды, қызуыңыз бар ма?",
+        good: { t: "Екі күннен бері тамағым ауырып, әлсіздік байқалып тұр, бірақ дене қызуым қалыпты.", fb: "Белгілерді дәл сипаттадыңыз." },
+        weak: { t: "Тамағым ауырып тұр.", fb: "«Әлсіздік байқалады», «дене қызуы қалыпты» сөйлемді байытады." } },
+      { bot: "Жеке куәлігіңіз өзіңізде ме?",
+        good: { t: "Иә, жеке куәлігімнің цифрлық нұсқасы eGov Mobile қосымшасында бар, қазір көрсете аламын.", fb: "Цифрлық терминдерді орынды қолдандыңыз." },
+        weak: { t: "Телефонда бар, қазір ашамын.", fb: "Нақтырақ айтқан жөн." } },
+      { bot: "Тексеруден кейін оқу орнына анықтама керек бола ма?",
+        good: { t: "Иә, сабақтан қалған күндерді растау үшін деканатқа анықтама рәсімдеп берсеңіздер жақсы болар еді.", fb: "Себебі мен мақсаты толық ашылды." },
+        weak: { t: "Иә, университетке керек.", fb: "Толық сөйлем құраңыз." } },
+      { bot: "Келістік. Тезірек сауығып кетіңіз!",
+        good: { t: "Көп рақмет, жылы лебізіңізге ризамын!", fb: "Сұхбатты сыпайы аяқтадыңыз." },
+        weak: { t: "Рақмет!", fb: "Дұрыс, бірақ толығырақ жауапқа болады." } }
+    ] }
+];
+
+const VOCAB = [
+  { term: "Бәсекеге қабілеттілік", ru: "Конкурентоспособность", cat: "Іскерлік лексика", ex: "Цифрлық дағдылар маманның бәсекеге қабілеттілігін арттырады." },
+  { term: "Басым бағыт", ru: "Приоритетное направление", cat: "Іскерлік лексика", ex: "Мемлекеттік тілді дамыту — біздің басым бағытымыз." },
+  { term: "Кешенді түрде талдау", ru: "Комплексно анализировать", cat: "Іскерлік лексика", ex: "Біз мәселені кешенді түрде талдап, нақты шешім ұсындық." },
+  { term: "Ұзақ мерзімді ынтымақтастық", ru: "Долгосрочное сотрудничество", cat: "Іскерлік лексика", ex: "Компаниялармен ұзақ мерзімді ынтымақтастық орнатылды." },
+  { term: "Тиімділікті дәлелдеу", ru: "Доказать эффективность", cat: "Іскерлік лексика", ex: "Сынақ нәтижесі жобаның тиімділігін дәлелдеуі керек." },
+  { term: "Қолжетімділік", ru: "Доступность", cat: "Іскерлік лексика", ex: "Веб-сайттың басты артықшылығы — қолжетімділік." },
+  { term: "Сонымен қатар", ru: "Кроме того / наряду с этим", cat: "Ойды байланыстыру", ex: "Ойын сөздік қорды байытады, сонымен қатар грамматиканы бекітеді." },
+  { term: "…-ға/-ге қарамастан", ru: "Несмотря на…", cat: "Ойды байланыстыру", ex: "Уақыттың аздығына қарамастан, прототип дайын болды." },
+  { term: "Дегенмен / Алайда", ru: "Однако / тем не менее", cat: "Ойды байланыстыру", ex: "Теория маңызды, дегенмен тәжірибе одан да маңызды." },
+  { term: "Қорыта келгенде", ru: "Подводя итог", cat: "Ойды байланыстыру", ex: "Қорыта келгенде, бұл платформа студенттерге нақты көмек береді." },
+  { term: "Біріншіден… Екіншіден…", ru: "Во-первых… Во-вторых…", cat: "Ойды байланыстыру", ex: "Біріншіден, бұл тегін, екіншіден, телефоннан бірден ашылады." },
+  { term: "Менің пайымдауымша", ru: "По моему мнению", cat: "Ойды байланыстыру", ex: "Менің пайымдауымша, ойын форматы оқу уәждемесін арттырады." }
+];
+
+// ================= STATE =================
+let S;
+function freshState() {
+  return { xp: 0, streak: 0, level: 1, qi: 0, answers: {}, order: makeOrders(), badges: new Set(),
+           loc: 0, step: 0, locScore: 0, locDone: {}, chatOrder: [], pops: false, rating: 0 };
+}
+function shuffle(n) {
+  const a = [...Array(n).keys()];
+  for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function makeOrders() {
+  const o = {};
+  for (const l of [1, 2, 3]) QUESTIONS[l].forEach((q, i) => { o[l + "-" + i] = shuffle(q.options.length); });
+  return o;
+}
+const $ = (id) => document.getElementById(id);
+
+// ================= HUD & TABS =================
+function updateHud() {
+  $("hud-xp").textContent = S.xp;
+  $("hud-streak").textContent = S.streak;
+  $("hud-badges").textContent = S.badges.size + "/4";
+  for (let n = 1; n <= 4; n++) $("badge-" + n).classList.toggle("on", S.badges.has(n));
+  for (const l of [1, 2, 3]) {
+    const st = levelStats(l);
+    $("lvl-score-" + l).textContent = st.correct + "/4";
+  }
+  buildReport();
+}
+function toggleRu() {
+  const hidden = document.body.classList.toggle("hide-ru");
+  const b = $("ru-btn");
+  b.setAttribute("aria-pressed", String(!hidden));
+  b.textContent = hidden ? "RU кеңес: өшірулі" : "RU кеңес: қосулы";
+}
+function openTab(id) {
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.tab === id)));
+  document.querySelectorAll("section.panel").forEach(p => { p.hidden = p.id !== "tab-" + id; });
+  window.scrollTo({ top: 0 });
+  if (id === "testing") buildReport();
+}
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => openTab(t.dataset.tab)));
+function measureHeader() {
+  document.documentElement.style.setProperty("--head-h", $("hdr").offsetHeight + "px");
+}
+window.addEventListener("resize", measureHeader);
+
+// ================= QUIZ =================
+function levelStats(l) {
+  let answered = 0, correct = 0;
+  QUESTIONS[l].forEach((q, i) => {
+    const a = S.answers[l + "-" + i];
+    if (a !== undefined) { answered++; if (a === q.correct) correct++; }
+  });
+  return { answered, correct };
+}
+function selectLevel(l) {
+  S.level = l; S.qi = 0;
+  renderQuestion();
+}
+function renderQuestion() {
+  document.querySelectorAll(".lvl").forEach(b => b.setAttribute("aria-pressed", String(+b.dataset.lvl === S.level)));
+  const q = QUESTIONS[S.level][S.qi];
+  const key = S.level + "-" + S.qi;
+  const global = (S.level - 1) * 4 + S.qi + 1;
+  $("q-counter").textContent = `${S.level}-деңгей • ${S.qi + 1}/4 (жалпы ${global}/12)`;
+  $("q-type").textContent = q.type;
+  $("q-prompt").textContent = q.prompt;
+  $("q-ru").textContent = "RU: " + q.ru;
+  $("q-sentence").textContent = q.sentence;
+  const box = $("q-options");
+  box.innerHTML = "";
+  const prev = S.answers[key];
+  S.order[key].forEach((orig, pos) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    const k = document.createElement("span"); k.className = "key"; k.textContent = "ABCD"[pos] + ".";
+    const t = document.createElement("span"); t.textContent = q.options[orig];
+    b.append(k, t);
+    if (prev !== undefined) {
+      b.disabled = true;
+      if (orig === q.correct) b.classList.add("correct");
+      else if (orig === prev) b.classList.add("wrong");
+    } else {
+      b.onclick = () => answer(orig);
+    }
+    box.appendChild(b);
+  });
+  const ex = $("q-explain");
+  if (prev !== undefined) {
+    const ok = prev === q.correct;
+    ex.hidden = false;
+    ex.classList.toggle("miss", !ok);
+    $("q-explain-title").textContent = ok ? "Дұрыс! +25 XP" : "Қате. Дұрыс жауаптың түсіндірмесі:";
+    $("q-explain-text").textContent = q.explain;
+    $("q-explain-ru").textContent = "RU: " + q.explainRu;
+  } else ex.hidden = true;
+  $("btn-prev").disabled = S.level === 1 && S.qi === 0;
+  const isLast = S.level === 3 && S.qi === 3;
+  $("btn-next").textContent = isLast ? "Басына →" : "Келесі →";
+  const all = [1, 2, 3].reduce((s, l) => s + levelStats(l).answered, 0);
+  const correct = [1, 2, 3].reduce((s, l) => s + levelStats(l).correct, 0);
+  $("game-done").hidden = all < 12;
+  $("game-done-text").textContent = `Ойын аяқталды: ${correct}/12 дұрыс жауап`;
+}
+function answer(orig) {
+  const q = QUESTIONS[S.level][S.qi];
+  const key = S.level + "-" + S.qi;
+  if (S.answers[key] !== undefined) return;
+  S.answers[key] = orig;
+  if (orig === q.correct) { S.xp += 25; S.streak++; } else S.streak = 0;
+  const st = levelStats(S.level);
+  if (st.answered === 4 && st.correct >= 3) S.badges.add(S.level);
+  updateHud();
+  renderQuestion();
+}
+function nextQuestion() {
+  if (S.qi < 3) S.qi++;
+  else if (S.level < 3) { S.level++; S.qi = 0; }
+  else { S.level = 1; S.qi = 0; }
+  renderQuestion();
+}
+function prevQuestion() {
+  if (S.qi > 0) S.qi--;
+  else if (S.level > 1) { S.level--; S.qi = 3; }
+  renderQuestion();
+}
+
+// ================= POPS =================
+function updatePops() {
+  const v = (id) => $(id).value;
+  $("pops-text").textContent = `«Менің ойымша, ${v("pops-topic")}, ${v("pops-reason")}. Мысалы, ${v("pops-example")}. Қорыта келгенде, ${v("pops-conclusion")}.»`;
+}
+function scorePops() {
+  if (!S.pops) { S.pops = true; S.xp += 50; updateHud(); }
+  $("pops-btn").disabled = true;
+  $("pops-status").textContent = "+50 XP. Енді өз мысалыңызбен айтып көріңіз.";
+}
+
+// ================= QR =================
+function locUrl(i) { return BASE_URL ? BASE_URL + "#loc" + (i + 1) : ""; }
+function drawQr(el, text, size) {
+  el.innerHTML = "";
+  if (!text || typeof QRCode === "undefined") {
+    const d = document.createElement("div"); d.className = "nolink";
+    d.textContent = text ? "QR жүктелмеді" : "QR сілтемесі жариялағаннан кейін шығады";
+    el.appendChild(d); return;
+  }
+  new QRCode(el, { text, width: size, height: size, colorDark: "#0f2838", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+}
+function renderQrGrid() {
+  const g = $("qr-grid");
+  g.innerHTML = "";
+  LOCS.forEach((loc, i) => {
+    const card = document.createElement("div");
+    card.className = "qr-card";
+    card.setAttribute("aria-pressed", String(i === S.loc));
+    const box = document.createElement("div"); box.className = "qr-box";
+    drawQr(box, locUrl(i), 152);
+    const info = document.createElement("div");
+    info.style.minWidth = "0";
+    const done = S.locDone[i];
+    info.innerHTML = `<span class="tag t-blue"></span><h4></h4><p></p><span class="ru"></span>
+      <div class="qr-meta"><button class="btn small" data-a="start"></button><button class="linkbtn" data-a="zoom">Үлкейту</button><span class="done"></span></div>`;
+    info.querySelector(".tag").textContent = (i + 1) + " • " + loc.code;
+    info.querySelector("h4").textContent = loc.title;
+    info.querySelector("p").textContent = loc.sub;
+    info.querySelector(".ru").textContent = "RU: " + loc.ru;
+    info.querySelector('[data-a="start"]').textContent = i === S.loc ? "Ашық" : "Диалогты бастау";
+    info.querySelector('[data-a="start"]').onclick = () => { selectLoc(i); $("chat-log").scrollIntoView({ behavior: "smooth", block: "center" }); };
+    info.querySelector('[data-a="zoom"]').onclick = () => openQr(i);
+    info.querySelector(".done").textContent = done !== undefined ? "Өтілді: " + done + "/100" : "";
+    card.append(box, info);
+    g.appendChild(card);
+  });
+}
+function openQr(i) {
+  $("qr-modal-title").textContent = (i + 1) + ". " + LOCS[i].title;
+  drawQr($("qr-modal-code"), locUrl(i), 480);
+  $("qr-modal").hidden = false;
+}
+function closeQr() { $("qr-modal").hidden = true; }
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeQr(); });
+
+function selectLoc(i) {
+  S.loc = i; S.step = 0; S.locScore = 0;
+  $("chat-log").innerHTML = "";
+  renderQrGrid();
+  const loc = LOCS[i];
+  $("sim-tag").textContent = `ЛОКАЦИЯ ${i + 1} • ${loc.code}`;
+  $("sim-title").textContent = loc.title;
+  renderStep();
+}
+function addMsg(cls, label, text) {
+  const m = document.createElement("div");
+  m.className = "msg " + cls;
+  if (label) { const b = document.createElement("strong"); b.textContent = label + " "; m.appendChild(b); }
+  m.appendChild(document.createTextNode(text));
+  $("chat-log").appendChild(m);
+  $("chat-log").scrollTop = $("chat-log").scrollHeight;
+}
+function renderStep() {
+  const loc = LOCS[S.loc];
+  const opts = $("chat-opts");
+  opts.innerHTML = "";
+  if (S.step >= loc.steps.length) {
+    const sc = S.locScore;
+    S.locDone[S.loc] = sc;
+    if (Object.keys(S.locDone).length === 5) S.badges.add(4);
+    $("sim-step").textContent = "Аяқталды 5/5";
+    let verdict;
+    if (sc >= 90) verdict = "Өте жақсы: жауаптарыңыз B2 деңгейіндегі ресми-іскерлік стильге сай.";
+    else if (sc >= 60) verdict = "Жақсы, бірақ кейбір жауаптар ауызекі стильде болды. Кері байланысты қайта оқып шығыңыз.";
+    else verdict = "Көп жауап тым қарапайым болды. Диалогты қайта өтіп көріңіз.";
+    addMsg("fb", "Қорытынды: " + sc + "/100.", verdict);
+    $("chat-lbl").textContent = "Диалог аяқталды.";
+    const again = document.createElement("button"); again.className = "btn ghost"; again.textContent = "Қайта өту";
+    again.onclick = () => selectLoc(S.loc);
+    const next = document.createElement("button"); next.className = "btn"; next.textContent = "Келесі локация →";
+    next.onclick = () => selectLoc((S.loc + 1) % LOCS.length);
+    const r = document.createElement("div"); r.className = "row"; r.append(again, next);
+    opts.appendChild(r);
+    updateHud(); renderQrGrid();
+    return;
+  }
+  const st = loc.steps[S.step];
+  $("sim-step").textContent = `Қадам ${S.step + 1}/5`;
+  $("chat-lbl").textContent = "Ең сауатты әрі сыпайы жауапты таңдаңыз:";
+  addMsg("bot", "Сұхбаттасушы:", st.bot);
+  const pair = Math.random() < 0.5 ? [["good", st.good], ["weak", st.weak]] : [["weak", st.weak], ["good", st.good]];
+  pair.forEach(([kind, o]) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.textContent = o.t;
+    b.onclick = () => choose(kind, o);
+    opts.appendChild(b);
+  });
+}
+function choose(kind, o) {
+  addMsg("me", "", o.t);
+  const pts = kind === "good" ? 20 : 8;
+  addMsg(kind === "good" ? "fb" : "fb weak", `+${pts}:`, o.fb);
+  S.locScore += pts; S.xp += pts;
+  if (kind === "good") S.streak++; else S.streak = 0;
+  S.step++;
+  updateHud();
+  $("chat-opts").innerHTML = "";
+  setTimeout(renderStep, 300);
+}
+
+// ================= VOCAB =================
+let vocabCat = "all";
+function filterVocab(c) {
+  vocabCat = c;
+  document.querySelectorAll(".chip").forEach(ch => ch.setAttribute("aria-pressed", String(ch.dataset.cat === c)));
+  renderVocab();
+}
+function renderVocab() {
+  const q = $("vocab-search").value.trim().toLowerCase();
+  const g = $("vocab-grid");
+  g.innerHTML = "";
+  const list = VOCAB.filter(v => (vocabCat === "all" || v.cat === vocabCat) &&
+    (v.term + " " + v.ru + " " + v.ex).toLowerCase().includes(q));
+  if (!list.length) { const e = document.createElement("div"); e.className = "empty"; e.textContent = "Ештеңе табылмады. Басқа сөзбен іздеп көріңіз."; g.appendChild(e); return; }
+  list.forEach(v => {
+    const c = document.createElement("div");
+    c.className = "card vocab";
+    c.innerHTML = `<span class="tag"></span><h3></h3><p class="ru-tr"></p><p class="ex"></p>`;
+    const tag = c.querySelector(".tag");
+    tag.classList.add(v.cat === "Іскерлік лексика" ? "t-blue" : "t-gold");
+    tag.textContent = v.cat;
+    c.querySelector("h3").textContent = v.term;
+    c.querySelector(".ru-tr").textContent = v.ru;
+    c.querySelector(".ex").textContent = "«" + v.ex + "»";
+    g.appendChild(c);
+  });
+}
+
+// ================= TESTING =================
+function setRating(n) {
+  S.rating = n;
+  document.querySelectorAll(".star").forEach((s, i) => s.setAttribute("aria-pressed", String(i < n)));
+  buildReport();
+}
+function buildReport() {
+  const ls = [1, 2, 3].map(levelStats);
+  const answered = ls.reduce((s, x) => s + x.answered, 0);
+  const correct = ls.reduce((s, x) => s + x.correct, 0);
+  ls.forEach((x, i) => { $("r-l" + (i + 1)).textContent = x.correct + "/4"; });
+  $("r-total").textContent = answered ? `${correct}/${answered}` : "—";
+  const doneVals = Object.values(S.locDone);
+  const avgQr = doneVals.length ? Math.round(doneVals.reduce((a, b) => a + b, 0) / doneVals.length) : null;
+  $("r-qr").textContent = doneVals.length + "/5";
+  $("r-qrscore").textContent = avgQr === null ? "—" : avgQr + "/100";
+  const name = $("fb-name").value.trim() || "(аты жазылмаған)";
+  const lines = [
+    "QazaqPro B2 — тестілеу нәтижесі",
+    "Тестер: " + name,
+    `Ойын: 1-деңгей ${ls[0].correct}/4, 2-деңгей ${ls[1].correct}/4, 3-деңгей ${ls[2].correct}/4`,
+    `Барлығы: ${correct}/12 дұрыс (${answered} сұраққа жауап берді)`,
+    `QR-диалог: ${doneVals.length}/5 өтілді` + (avgQr === null ? "" : `, орташа ${avgQr}/100`),
+    "Баға: " + (S.rating ? S.rating + "/5" : "—"),
+    "Ең пайдалы бөлім: " + ($("fb-module").value || "—"),
+    "Қиын болғаны: " + ($("fb-hard").value.trim() || "—"),
+    "Ұсыныс: " + ($("fb-text").value.trim() || "—")
+  ];
+  $("report").value = lines.join("\n");
+}
+function copyReport() {
+  buildReport();
+  const ta = $("report");
+  const done = () => { $("copy-status").textContent = "Көшірілді. Енді топ чатына қойыңыз."; };
+  try {
+    navigator.clipboard.writeText(ta.value).then(done, () => { ta.focus(); ta.select(); $("copy-status").textContent = "Мәтін белгіленді — қолмен көшіріңіз."; });
+  } catch (e) { ta.focus(); ta.select(); $("copy-status").textContent = "Мәтін белгіленді — қолмен көшіріңіз."; }
+}
+let resetArmed = false;
+function resetAll() {
+  const b = $("reset-btn");
+  if (!resetArmed) {
+    resetArmed = true;
+    b.textContent = "Растау: барлығын тазалау";
+    $("copy-status").textContent = "Нәтижені көшірдіңіз бе? Қайта басыңыз.";
+    setTimeout(() => { if (resetArmed) { resetArmed = false; b.textContent = "Келесі тестер"; $("copy-status").textContent = ""; } }, 5000);
+    return;
+  }
+  resetArmed = false;
+  b.textContent = "Келесі тестер";
+  ["fb-name", "fb-hard", "fb-text"].forEach(id => { $(id).value = ""; });
+  $("fb-module").value = "";
+  S = freshState();
+  $("pops-btn").disabled = false; $("pops-status").textContent = "";
+  setRating(0);
+  renderQuestion(); selectLoc(0); updateHud();
+  $("copy-status").textContent = "Тазаланды. Келесі тестер бастай алады.";
+  openTab("game");
+}
+
+// ================= INIT =================
+function applyHash() {
+  const h = (location.hash || "").replace("#", "");
+  const m = h.match(/^loc([1-5])$/);
+  if (m) { openTab("qr"); selectLoc(+m[1] - 1); return; }
+  if (["passport", "game", "qr", "vocab", "testing"].includes(h)) openTab(h);
+}
+S = freshState();
+measureHeader();
+renderQuestion();
+updatePops();
+selectLoc(0);
+renderVocab();
+updateHud();
+applyHash();
+window.addEventListener("hashchange", applyHash);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureHeader);
+</script>
+
+</body>
+</html>
